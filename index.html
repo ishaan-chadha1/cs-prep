@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Dev Practicals - Master List</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { display: flex; height: 100vh; background: #f8f9fa; color: #333; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 320px; background: #2c3e50; color: white; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar h2 { padding: 20px; font-size: 1.1rem; text-align: center; background: #1a252f; border-bottom: 1px solid #34495e; }
+        .program-btn { background: none; border: none; color: #bdc3c7; padding: 12px 15px; text-align: left; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 0.9rem; transition: 0.2s; line-height: 1.3; }
+        .program-btn:hover { background: #34495e; color: white; }
+        .program-btn.active { background: #3498db; color: white; font-weight: bold; border-left: 5px solid #2980b9; }
+
+        /* Main Workspace */
+        .workspace { flex: 1; display: flex; flex-direction: column; height: 100vh; }
+        
+        /* Top: Question Bar */
+        .question-bar { padding: 20px; background: white; border-bottom: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; min-height: 120px;}
+        .question-bar h3 { color: #2980b9; margin-bottom: 10px; font-size: 1.2rem; }
+        .question-bar p { font-size: 0.95rem; line-height: 1.5; color: #444; font-weight: 500;}
+
+        /* Bottom: Split View (Code & Output) */
+        .split-view { display: flex; flex: 1; overflow: hidden; }
+        
+        /* Left: Code Box */
+        .code-panel { flex: 1; background: #1e1e1e; color: #d4d4d4; overflow-y: auto; padding: 20px; font-family: Consolas, monospace; font-size: 13.5px; line-height: 1.5; border-right: 2px solid #000; }
+        .code-panel pre { margin: 0; white-space: pre-wrap; }
+
+        /* Right: Output Box */
+        .output-panel { flex: 1; background: white; display: flex; flex-direction: column; }
+        .output-panel iframe { width: 100%; height: 100%; border: none; }
+        
+        .panel-header { background: #e0e0e0; padding: 8px 15px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #555; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <h2>ALL PRACTICAL PROGRAMS</h2>
+        <!-- Buttons injected by JS -->
+    </div>
+
+    <div class="workspace">
+        <div class="question-bar">
+            <h3 id="q-title">Select a program</h3>
+            <p id="q-desc">Click a program on the left to view its question, code, and live output side-by-side.</p>
+        </div>
+        
+        <div class="split-view">
+            <div class="code-panel">
+                <div class="panel-header" style="background:#333; color:#aaa; margin:-20px -20px 20px -20px;">Code to Memorize</div>
+                <pre><code id="code-display">Code will appear here...</code></pre>
+            </div>
+            <div class="output-panel">
+                <div class="panel-header">Live Output</div>
+                <iframe id="output-frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use \x3C to safely embed a script tag inside a string without breaking the HTML parser
+        const endScript = "\\x3C/script>";
+
+        const programs = [
+            {
+                id: "p1", title: "1. Profile Webpage (Lists)", type: "html",
+                question: "Create a personal profile webpage containing your educational qualifications, hobbies, achievements, career objective, and ideals. Use appropriate ordered lists, unordered lists, and nested lists wherever required.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h1>Ishaan Chadha</h1>
+    
+    <h3>Career Objective</h3>
+    <p>To secure a position as a Full-Stack Software Developer.</p>
+
+    <h3>Educational Qualifications</h3>
+    <ol>
+        <li>Bachelor of Science (Electronics and CS)
+            <ul>
+                <li>St. Joseph's University</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>Hobbies</h3>
+    <ul>
+        <li>Triathlon Training</li>
+        <li>Open Source Contributions</li>
+    </ul>
+
+    <h3>Ideals</h3>
+    <ul>
+        <li>Writing scalable code</li>
+        <li>Continuous learning</li>
+    </ul>
+</body>
+</html>`
+            },
+            {
+                id: "p2", title: "2. Temp Converter (JS)", type: "html",
+                question: "Write a JavaScript program to convert temperatures to and from Celsius, Fahrenheit.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Temperature Converter</h2>
+    
+    <label>Celsius:</label><br>
+    <input type="number" id="c" oninput="toFahrenheit()"><br><br>
+    
+    <label>Fahrenheit:</label><br>
+    <input type="number" id="f" oninput="toCelsius()">
+
+    <script>
+        function toFahrenheit() {
+            let cValue = document.getElementById('c').value;
+            if (cValue !== "") {
+                let fValue = (parseFloat(cValue) * 9/5) + 32;
+                document.getElementById('f').value = fValue.toFixed(2);
+            } else {
+                document.getElementById('f').value = "";
+            }
+        }
+
+        function toCelsius() {
+            let fValue = document.getElementById('f').value;
+            if (fValue !== "") {
+                let cValue = (parseFloat(fValue) - 32) * 5/9;
+                document.getElementById('c').value = cValue.toFixed(2);
+            } else {
+                document.getElementById('c').value = "";
+            }
+        }
+    \x3C/script>
+</body>
+</html>`
+            },
+            {
+                id: "p3", title: "3. Timetable (3 Days)", type: "html",
+                question: "Create a webpage to display your class timetable for three days using the HTML <table> element. Use the <caption>, <tr>, <th>, and <td> tags with a border.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <table border="1" cellpadding="10" cellspacing="0">
+        <caption>Class Timetable (3 Days)</caption>
+        <tr>
+            <th>Day</th>
+            <th>09:00 - 10:00</th>
+            <th>10:00 - 11:00</th>
+        </tr>
+        <tr>
+            <th>Monday</th>
+            <td>Data Structures</td>
+            <td>Electronics Lab</td>
+        </tr>
+        <tr>
+            <th>Wednesday</th>
+            <td>Web Development</td>
+            <td>Database Systems</td>
+        </tr>
+        <tr>
+            <th>Friday</th>
+            <td>Algorithms</td>
+            <td>Project Lab</td>
+        </tr>
+    </table>
+</body>
+</html>`
+            },
+            {
+                id: "p4", title: "4. Leap Year (JS)", type: "html",
+                question: "Write a JavaScript program to determine whether a given year is a leap year in the Gregorian calendar.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Leap Year Checker</h2>
+    
+    <input type="number" id="year" placeholder="Enter Year">
+    <button onclick="checkLeap()">Check</button>
+    <h3 id="result"></h3>
+
+    <script>
+        function checkLeap() {
+            let year = parseInt(document.getElementById('year').value);
+            let result = document.getElementById('result');
+            
+            if (isNaN(year)) {
+                result.innerText = "Please enter a valid year.";
+                return;
+            }
+
+            if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
+                result.innerText = year + " is a Leap Year.";
+            } else {
+                result.innerText = year + " is NOT a Leap Year.";
+            }
+        }
+    \x3C/script>
+</body>
+</html>`
+            },
+            {
+                id: "p5", title: "5. Reservation Form", type: "html",
+                question: "Design and develop a reservation form using HTML forms. Collect name, contact, date, time, number of persons, reservation type, etc.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Table Reservation Form</h2>
+    <form>
+        Name: <input type="text" required><br><br>
+        Contact: <input type="text" required><br><br>
+        Date: <input type="date" required><br><br>
+        Time: <input type="time" required><br><br>
+        Persons: <input type="number" min="1" max="20" required><br><br>
+        
+        Reservation Type:
+        <select>
+            <option>Indoor</option>
+            <option>Outdoor</option>
+            <option>Private Room</option>
+        </select><br><br>
+        
+        <button type="submit">Reserve</button>
+    </form>
+</body>
+</html>`
+            },
+            {
+                id: "p6", title: "6. College Admission Form", type: "html",
+                question: "Write HTML code to create a student admission application form for a college using appropriate HTML form elements.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>College Admission Form</h2>
+    <form>
+        Full Name: <input type="text" required><br><br>
+        Date of Birth: <input type="date" required><br><br>
+        
+        Gender: 
+        <input type="radio" name="gender"> Male
+        <input type="radio" name="gender"> Female<br><br>
+        
+        Course Applying For:
+        <select>
+            <option>B.Sc Electronics & CS</option>
+            <option>B.A.</option>
+            <option>B.Com</option>
+        </select><br><br>
+        
+        Previous Grade (%): <input type="number" max="100"><br><br>
+        
+        <button type="submit">Submit Application</button>
+    </form>
+</body>
+</html>`
+            },
+            {
+                id: "p7", title: "7. Valid: Name & Pass (JS)", type: "html",
+                question: "Write JavaScript to validate: First Name (alphabets only, min 6 chars) and Password (min 6 chars length).",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Register</h2>
+    <form onsubmit="return validate()">
+        First Name: <input type="text" id="fname">
+        <span id="fErr" style="color:red"></span><br><br>
+
+        Password: <input type="password" id="pwd">
+        <span id="pErr" style="color:red"></span><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function validate() {
+            let fname = document.getElementById('fname').value;
+            let pwd = document.getElementById('pwd').value;
+            let valid = true;
+
+            document.getElementById('fErr').innerText = "";
+            document.getElementById('pErr').innerText = "";
+
+            if (fname.length < 6 || !/^[A-Za-z]+$/.test(fname)) {
+                document.getElementById('fErr').innerText = " Min 6 chars, alphabets only.";
+                valid = false;
+            }
+            if (pwd.length < 6) {
+                document.getElementById('pErr').innerText = " Min 6 chars.";
+                valid = false;
+            }
+
+            if(valid) alert("Passed!");
+            return false;
+        }
+    \x3C/script>
+</body>
+</html>`
+            },
+            {
+                id: "p8", title: "8. Detailed Timetable", type: "html",
+                question: "Create an HTML webpage using the <table> tag to display the class timetable. Include days, period timings, and subjects in rows and columns.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <table border="1" cellpadding="8" cellspacing="0" style="width:100%; text-align:center;">
+        <tr style="background:#ddd;">
+            <th>Day / Time</th>
+            <th>09:00 - 10:00</th>
+            <th>10:00 - 11:00</th>
+            <th>11:00 - 11:15</th>
+            <th>11:15 - 12:15</th>
+        </tr>
+        <tr>
+            <th>Monday</th>
+            <td>Data Structures</td>
+            <td>Electronics</td>
+            <td rowspan="3"><strong>BREAK</strong></td>
+            <td>Web Tech</td>
+        </tr>
+        <tr>
+            <th>Tuesday</th>
+            <td colspan="2">Lab Session</td>
+            <td>Algorithms</td>
+        </tr>
+        <tr>
+            <th>Wednesday</th>
+            <td>Web Tech</td>
+            <td>Data Structures</td>
+            <td>Projects</td>
+        </tr>
+    </table>
+</body>
+</html>`
+            },
+            {
+                id: "p9", title: "9. Simple Interest (JS)", type: "html",
+                question: "Write a JavaScript program to calculate the Simple Interest for the given Principal (P), Rate of Interest (R), and Time (T).",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Simple Interest Calculator</h2>
+
+    Principal: <input type="number" id="p"><br><br>
+    Rate (%): <input type="number" id="r"><br><br>
+    Time (Yrs): <input type="number" id="t"><br><br>
+    
+    <button onclick="calculateSI()">Calculate</button>
+    <h3 id="result"></h3>
+
+    <script>
+        function calculateSI() {
+            let p = parseFloat(document.getElementById('p').value);
+            let r = parseFloat(document.getElementById('r').value);
+            let t = parseFloat(document.getElementById('t').value);
+
+            if (isNaN(p) || isNaN(r) || isNaN(t)) {
+                document.getElementById('result').innerText = "Enter all values.";
+                return;
+            }
+
+            let si = (p * r * t) / 100;
+            document.getElementById('result').innerText = "Simple Interest: " + si.toFixed(2);
+        }
+    \x3C/script>
+</body>
+</html>`
+            },
+            {
+                id: "p10", title: "10. Weather App (React)", type: "react",
+                question: "Prepare Project for Weather Finder App using React Js.",
+                code: `import React, { useState } from 'react';
+
+export default function WeatherFinder() {
+  const [city, setCity] = useState('');
+  const [weather, setWeather] = useState(null);
+
+  const fetchWeather = () => {
+    if(city.trim() !== '') {
+        setWeather({ name: city, temp: '28°C', condition: 'Sunny' });
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h2>Weather Finder</h2>
+      
+      <input 
+        type="text" 
+        placeholder="Enter City"
+        value={city}
+        onChange={(e) => setCity(e.target.value)} 
+      />
+      <button onClick={fetchWeather}>Search</button>
+
+      {weather && (
+        <div style={{ marginTop: '20px', border: '1px solid #ccc', padding: '15px' }}>
+          <h3>{weather.name}</h3>
+          <p>Temperature: {weather.temp}</p>
+          <p>Condition: {weather.condition}</p>
+        </div>
+      )}
+    </div>
+  );
+}`
+            },
+            {
+                id: "p11", title: "11. Bill Calculator (React)", type: "react",
+                question: "Prepare a project for Bill and Discount Calculator using React JS.",
+                code: `import React, { useState } from 'react';
+
+export default function BillCalculator() {
+  const [amount, setAmount] = useState(0);
+  const [discountPercent, setDiscountPercent] = useState(0);
+
+  const discountAmount = (amount * discountPercent) / 100;
+  const finalBill = amount - discountAmount;
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+      <h2>Bill Calculator</h2>
+      
+      <label>Bill Amount ($): </label><br/>
+      <input type="number" onChange={(e) => setAmount(Number(e.target.value))} /><br/><br/>
+
+      <label>Discount (%): </label><br/>
+      <input type="number" onChange={(e) => setDiscountPercent(Number(e.target.value))} /><br/><br/>
+
+      <div style={{ background: '#eee', padding: '10px' }}>
+        <p>Original: $\${amount}</p>
+        <p>Saved: $\${discountAmount}</p>
+        <h3>Final Payable: $\${finalBill}</h3>
+      </div>
+    </div>
+  );
+}`
+            },
+            {
+                id: "p12", title: "12. Hospital Form", type: "html",
+                question: "Write an HTML program to create a Hospital Admission Form. Collect patient's name, age, gender, contact number, address, etc.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Hospital Admission Form</h2>
+    <form>
+        Patient Name: <input type="text" required><br><br>
+        Age: <input type="number" required><br><br>
+        
+        Gender: 
+        <input type="radio" name="gender"> M
+        <input type="radio" name="gender"> F<br><br>
+        
+        Contact Number: <input type="tel" required><br><br>
+        
+        Address:<br>
+        <textarea rows="3" cols="30" required></textarea><br><br>
+        
+        Ward Type:
+        <select>
+            <option>General Ward</option>
+            <option>ICU</option>
+        </select><br><br>
+        
+        <button type="submit">Admit Patient</button>
+    </form>
+</body>
+</html>`
+            },
+            {
+                id: "p13", title: "13. CSS Types Demo", type: "html",
+                question: "Develop and demonstrate the usage of inline, internal and external style sheet using CSS.",
+                code: `<!DOCTYPE html>
+<html>
+<head>
+    <!-- 1. Internal CSS -->
+    <style>
+        .internal-box { background: #3498db; color: white; padding: 10px; }
+    </style>
+    
+    <!-- 2. External CSS (Linking to a hypothetical style.css file) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>CSS Demonstrations</h2>
+
+    <!-- 3. Inline CSS -->
+    <div style="background: #e74c3c; color: white; padding: 10px; margin-bottom: 10px;">
+        This box uses INLINE CSS (style attribute directly on the tag).
+    </div>
+
+    <div class="internal-box">
+        This box uses INTERNAL CSS (styles defined in the &lt;style&gt; tag in head).
+    </div>
+
+    <div class="external-class" style="margin-top:10px; padding:10px; border:1px solid black;">
+        External CSS would apply to this div if 'style.css' existed in the folder.
+    </div>
+</body>
+</html>`
+            },
+            {
+                id: "p14", title: "14. Job Application Form", type: "html",
+                question: "Write HTML code to create an Online Job Application Form using appropriate HTML form elements to collect personal, educational, and professional details.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Online Job Application</h2>
+    <form>
+        <fieldset>
+            <legend>Personal Details</legend>
+            Name: <input type="text" required><br><br>
+            Email: <input type="email" required>
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Educational Details</legend>
+            Degree: <input type="text" placeholder="e.g. B.Sc Electronics"><br><br>
+            University: <input type="text" placeholder="e.g. St. Joseph's">
+        </fieldset><br>
+
+        <fieldset>
+            <legend>Professional Details</legend>
+            Years of Experience: <input type="number"><br><br>
+            Upload Resume: <input type="file" accept=".pdf">
+        </fieldset><br>
+
+        <button type="submit">Submit Application</button>
+    </form>
+</body>
+</html>`
+            },
+            {
+                id: "p15", title: "15. Valid: Name & Mobile (JS)", type: "html",
+                question: "Write a JavaScript program to validate a Registration Page. First Name: alphabets only, min 6 chars. Mobile Number: exactly 10 digits, numbers only.",
+                code: `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial; padding: 20px;">
+    <h2>Registration Form</h2>
+
+    <form onsubmit="return validateForm()">
+        First Name: <input type="text" id="fname">
+        <span id="nErr" style="color:red"></span><br><br>
+
+        Mobile: <input type="text" id="mob">
+        <span id="mErr" style="color:red"></span><br><br>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        function validateForm() {
+            let fname = document.getElementById('fname').value;
+            let mob = document.getElementById('mob').value;
+            let valid = true;
+
+            document.getElementById('nErr').innerText = "";
+            document.getElementById('mErr').innerText = "";
+
+            if (fname.length < 6 || !/^[A-Za-z]+$/.test(fname)) {
+                document.getElementById('nErr').innerText = " Min 6 letters.";
+                valid = false;
+            }
+
+            if (!/^\\d{10}$/.test(mob)) {
+                document.getElementById('mErr').innerText = " Exactly 10 digits required.";
+                valid = false;
+            }
+
+            if(valid) alert("Success!");
+            return false;
+        }
+    \x3C/script>
+</body>
+</html>`
+            }
+        ];
+
+        // --- Render Sidebar ---
+        const sidebar = document.getElementById('sidebar');
+        programs.forEach(prog => {
+            const btn = document.createElement('button');
+            btn.className = 'program-btn';
+            btn.innerText = prog.title;
+            btn.onclick = () => loadProgram(prog, btn);
+            sidebar.appendChild(btn);
+        });
+
+        // --- Load Program Logic ---
+        function loadProgram(prog, btnElement) {
+            document.querySelectorAll('.program-btn').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+
+            document.getElementById('q-title').innerText = prog.title;
+            document.getElementById('q-desc').innerText = prog.question;
+            
+            // Format for code display (convert \x3C back to standard < for reading)
+            document.getElementById('code-display').innerText = prog.code.replace(/\\x3C\/script>/g, "</" + "script>");
+
+            const iframe = document.getElementById('output-frame');
+            
+            if (prog.type === 'html') {
+                iframe.srcdoc = prog.code.replace(/\\x3C\/script>/g, "</" + "script>");
+            } 
+            else if (prog.type === 'react') {
+                const match = prog.code.match(/function\s+([A-Za-z0-9_]+)/);
+                const componentName = match ? match[1] : 'App';
+                
+                let reactWrapper = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin>\x3C/script>
+                        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin>\x3C/script>
+                        <script src="https://unpkg.com/@babel/standalone/babel.min.js">\x3C/script>
+                    </head>
+                    <body>
+                        <div id="root"></div>
+                        <script type="text/babel">
+                            ${prog.code.replace(/export default function/, 'function').replace(/import .*;/g, '')}
+                            const root = ReactDOM.createRoot(document.getElementById('root'));
+                            root.render(<${componentName} />);
+                        \x3C/script>
+                    </body>
+                    </html>
+                `;
+                iframe.srcdoc = reactWrapper;
+            }
+        }
+
+        // Auto-load first program 
+        window.onload = () => {
+            if(programs.length > 0) {
+                loadProgram(programs[0], document.querySelectorAll('.program-btn')[0]);
+            }
+        };
+    </script>
+</body>
+</html>
