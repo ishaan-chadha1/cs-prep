@@ -6,10 +6,11 @@
     <title>Web Dev Practicals - Master List</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { display: flex; height: 100vh; background: #f8f9fa; color: #333; overflow: hidden; }
+        :root { --sidebar: #2c3e50; --sidebar-dark: #1a252f; --accent: #3498db; --border: #dfe3e8; }
+        body { display: flex; min-height: 100vh; background: #f8f9fa; color: #333; }
         
         /* Sidebar */
-        .sidebar { width: 320px; background: #2c3e50; color: white; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar { width: 320px; flex: 0 0 320px; background: var(--sidebar); color: white; display: flex; flex-direction: column; overflow-y: auto; }
         .sidebar h2 { padding: 20px; font-size: 1.1rem; text-align: center; background: #1a252f; border-bottom: 1px solid #34495e; }
         .program-btn { background: none; border: none; color: #bdc3c7; padding: 12px 15px; text-align: left; cursor: pointer; border-bottom: 1px solid #34495e; font-size: 0.9rem; transition: 0.2s; line-height: 1.3; }
         .program-btn:hover { background: #34495e; color: white; }
@@ -20,21 +21,55 @@
         
         /* Top: Question Bar */
         .question-bar { padding: 20px; background: white; border-bottom: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; min-height: 120px;}
+        .question-heading { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
         .question-bar h3 { color: #2980b9; margin-bottom: 10px; font-size: 1.2rem; }
         .question-bar p { font-size: 0.95rem; line-height: 1.5; color: #444; font-weight: 500;}
+        .action-button { border: 0; border-radius: 6px; padding: 10px 14px; background: var(--accent); color: white; cursor: pointer; font-weight: 600; white-space: nowrap; }
+        .action-button:hover { background: #217dbb; }
+        .action-button.secondary { background: #566573; }
+        .action-button.secondary:hover { background: #3f4c57; }
 
         /* Bottom: Split View (Code & Output) */
-        .split-view { display: flex; flex: 1; overflow: hidden; }
+        .split-view { display: flex; flex: 1; min-height: 0; overflow: hidden; }
         
         /* Left: Code Box */
-        .code-panel { flex: 1; background: #1e1e1e; color: #d4d4d4; overflow-y: auto; padding: 20px; font-family: Consolas, monospace; font-size: 13.5px; line-height: 1.5; border-right: 2px solid #000; }
+        .code-panel { flex: 1; min-width: 0; background: #1e1e1e; color: #d4d4d4; overflow: auto; padding: 20px; font-family: Consolas, monospace; font-size: 13.5px; line-height: 1.5; border-right: 2px solid #000; }
         .code-panel pre { margin: 0; white-space: pre-wrap; }
+        .code-panel code, .practice-editor { font-family: Consolas, Monaco, monospace; }
+        .token-tag, .token-keyword { color: #569cd6; }
+        .token-attr, .token-function { color: #dcdcaa; }
+        .token-string { color: #ce9178; }
+        .token-comment { color: #6a9955; }
+        .token-number { color: #b5cea8; }
+        .practice-panel { display: none; height: 100%; flex-direction: column; }
+        .practice-panel.visible { display: flex; }
+        .practice-editor { width: 100%; flex: 1; resize: none; border: 0; outline: 0; background: #111827; color: #e5e7eb; padding: 16px; font-size: 13.5px; line-height: 1.5; tab-size: 2; }
+        .practice-toolbar { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 0 14px; }
+        .practice-note { color: #aab4bf; font: 12px/1.4 'Segoe UI', sans-serif; margin-top: -6px; }
+        .practice-message { min-height: 18px; color: #79c7ff; font: 12px 'Segoe UI', sans-serif; }
 
         /* Right: Output Box */
-        .output-panel { flex: 1; background: white; display: flex; flex-direction: column; }
+        .output-panel { flex: 1; min-width: 0; background: white; display: flex; flex-direction: column; }
         .output-panel iframe { width: 100%; height: 100%; border: none; }
         
         .panel-header { background: #e0e0e0; padding: 8px 15px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #555; }
+        @media (max-width: 800px) {
+            body { display: block; }
+            .sidebar { width: 100%; height: auto; max-height: 260px; }
+            .sidebar h2 { position: sticky; top: 0; z-index: 2; }
+            .workspace { height: auto; min-height: calc(100vh - 260px); }
+            .question-heading { flex-direction: column; }
+            .question-heading .action-button { width: 100%; }
+            .split-view { display: block; overflow: visible; }
+            .code-panel, .output-panel { min-height: 420px; height: 50vh; border-right: 0; border-bottom: 2px solid #000; }
+            .output-panel { height: 60vh; }
+        }
+        @media (max-width: 480px) {
+            .program-btn { padding: 10px 12px; }
+            .question-bar { padding: 15px; }
+            .code-panel { padding: 14px; font-size: 12px; }
+            .code-panel .panel-header { margin: -14px -14px 14px -14px !important; }
+        }
     </style>
 </head>
 <body>
@@ -46,18 +81,36 @@
 
     <div class="workspace">
         <div class="question-bar">
-            <h3 id="q-title">Select a program</h3>
-            <p id="q-desc">Click a program on the left to view its question, code, and live output side-by-side.</p>
+            <div class="question-heading">
+                <div>
+                    <h3 id="q-title">Select a program</h3>
+                    <p id="q-desc">Click a program on the left to view its question, code, and live output side-by-side.</p>
+                </div>
+                <button class="action-button" id="practice-toggle" type="button">Practice mode</button>
+            </div>
         </div>
         
         <div class="split-view">
             <div class="code-panel">
-                <div class="panel-header" style="background:#333; color:#aaa; margin:-20px -20px 20px -20px;">Code to Memorize</div>
-                <pre><code id="code-display">Code will appear here...</code></pre>
+                <div id="solution-view">
+                    <div class="panel-header" style="background:#333; color:#aaa; margin:-20px -20px 20px -20px;">Syntax-highlighted solution</div>
+                    <pre><code id="code-display">Code will appear here...</code></pre>
+                </div>
+                <div class="practice-panel" id="practice-view">
+                    <div class="panel-header" style="background:#333; color:#aaa; margin:-20px -20px 14px -20px;">Practice editor</div>
+                    <div class="practice-toolbar">
+                        <button class="action-button" id="run-practice" type="button">Run code</button>
+                        <button class="action-button secondary" id="reset-practice" type="button">Reset</button>
+                        <button class="action-button secondary" id="show-solution" type="button">Show solution</button>
+                    </div>
+                    <p class="practice-note">Edit the starter code, then run it to test your solution in the preview.</p>
+                    <textarea class="practice-editor" id="practice-editor" spellcheck="false" aria-label="Practice code editor"></textarea>
+                    <p class="practice-message" id="practice-message" role="status"></p>
+                </div>
             </div>
             <div class="output-panel">
-                <div class="panel-header">Live Output</div>
-                <iframe id="output-frame"></iframe>
+                <div class="panel-header">Live Output <button id="refresh-output" type="button" style="float:right; border:0; cursor:pointer;">↻ Refresh</button></div>
+                <iframe id="output-frame" title="Live practical output"></iframe>
             </div>
         </div>
     </div>
@@ -578,6 +631,72 @@ export default function BillCalculator() {
             }
         ];
 
+        const solutionView = document.getElementById('solution-view');
+        const practiceView = document.getElementById('practice-view');
+        const practiceToggle = document.getElementById('practice-toggle');
+        const practiceEditor = document.getElementById('practice-editor');
+        const practiceMessage = document.getElementById('practice-message');
+        const iframe = document.getElementById('output-frame');
+        let selectedProgram = null;
+        let practiceMode = false;
+
+        function decodeCode(code) {
+            return code.replace(/\\x3C\/script>/g, "</" + "script>");
+        }
+
+        function escapeHtml(value) {
+            return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function highlightCode(code) {
+            const escaped = escapeHtml(decodeCode(code));
+            const protectedParts = [];
+            const protect = (value, className) => {
+                const marker = `___TOKEN_${protectedParts.length}___`;
+                protectedParts.push(`<span class="token-${className}">${value}</span>`);
+                return marker;
+            };
+
+            let highlighted = escaped
+                .replace(/(&lt;!--[\s\S]*?--&gt;|\/\/.*$)/gm, match => protect(match, 'comment'))
+                .replace(/(&quot;.*?&quot;|&#39;.*?&#39;|`.*?`)/g, match => protect(match, 'string'))
+                .replace(/(&lt;\/?[a-zA-Z][^&]*?&gt;)/g, match => protect(match, 'tag'))
+                .replace(/\b(function|const|let|var|return|if|else|for|while|new|import|from|export|default|true|false|null)\b/g, match => protect(match, 'keyword'))
+                .replace(/\b([A-Za-z_$][\w$]*)(?=\()/g, match => protect(match, 'function'))
+                .replace(/\b\d+(?:\.\d+)?\b/g, match => protect(match, 'number'));
+
+            protectedParts.forEach((part, index) => {
+                highlighted = highlighted.replace(`___TOKEN_${index}___`, part);
+            });
+            return highlighted;
+        }
+
+        function renderOutput(code) {
+            if (!selectedProgram) return;
+            if (selectedProgram.type === 'html') {
+                iframe.srcdoc = decodeCode(code);
+                return;
+            }
+
+            const match = code.match(/function\s+([A-Za-z0-9_]+)/);
+            const componentName = match ? match[1] : 'App';
+            iframe.srcdoc = `
+                <!DOCTYPE html><html><head>
+                <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin>\x3C/script>
+                <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin>\x3C/script>
+                <script src="https://unpkg.com/@babel/standalone/babel.min.js">\x3C/script>
+                </head><body><div id="root"></div>
+                <script type="text/babel">
+                    ${code.replace(/export default function/, 'function').replace(/import .*;/g, '')}
+                    const root = ReactDOM.createRoot(document.getElementById('root'));
+                    root.render(<${componentName} />);
+                \x3C/script></body></html>`;
+        }
+
+        function setPracticeMessage(message) {
+            practiceMessage.innerText = message;
+        }
+
         // --- Render Sidebar ---
         const sidebar = document.getElementById('sidebar');
         programs.forEach(prog => {
@@ -590,45 +709,52 @@ export default function BillCalculator() {
 
         // --- Load Program Logic ---
         function loadProgram(prog, btnElement) {
+            selectedProgram = prog;
             document.querySelectorAll('.program-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
 
             document.getElementById('q-title').innerText = prog.title;
             document.getElementById('q-desc').innerText = prog.question;
             
-            // Format for code display (convert \x3C back to standard < for reading)
-            document.getElementById('code-display').innerText = prog.code.replace(/\\x3C\/script>/g, "</" + "script>");
-
-            const iframe = document.getElementById('output-frame');
-            
-            if (prog.type === 'html') {
-                iframe.srcdoc = prog.code.replace(/\\x3C\/script>/g, "</" + "script>");
-            } 
-            else if (prog.type === 'react') {
-                const match = prog.code.match(/function\s+([A-Za-z0-9_]+)/);
-                const componentName = match ? match[1] : 'App';
-                
-                let reactWrapper = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin>\x3C/script>
-                        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin>\x3C/script>
-                        <script src="https://unpkg.com/@babel/standalone/babel.min.js">\x3C/script>
-                    </head>
-                    <body>
-                        <div id="root"></div>
-                        <script type="text/babel">
-                            ${prog.code.replace(/export default function/, 'function').replace(/import .*;/g, '')}
-                            const root = ReactDOM.createRoot(document.getElementById('root'));
-                            root.render(<${componentName} />);
-                        \x3C/script>
-                    </body>
-                    </html>
-                `;
-                iframe.srcdoc = reactWrapper;
-            }
+            document.getElementById('code-display').innerHTML = highlightCode(prog.code);
+            practiceEditor.value = decodeCode(prog.code);
+            setPracticeMessage('');
+            renderOutput(prog.code);
         }
+
+        practiceToggle.addEventListener('click', () => {
+            practiceMode = !practiceMode;
+            solutionView.style.display = practiceMode ? 'none' : 'block';
+            practiceView.classList.toggle('visible', practiceMode);
+            practiceToggle.innerText = practiceMode ? 'View solution' : 'Practice mode';
+            if (practiceMode) practiceEditor.focus();
+        });
+
+        document.getElementById('run-practice').addEventListener('click', () => {
+            if (!practiceEditor.value.trim()) {
+                setPracticeMessage('Write some code before running it.');
+                return;
+            }
+            renderOutput(practiceEditor.value);
+            setPracticeMessage('Code ran in the preview.');
+        });
+
+        document.getElementById('reset-practice').addEventListener('click', () => {
+            if (!selectedProgram) return;
+            practiceEditor.value = decodeCode(selectedProgram.code);
+            renderOutput(practiceEditor.value);
+            setPracticeMessage('Starter code restored.');
+        });
+
+        document.getElementById('show-solution').addEventListener('click', () => {
+            if (!selectedProgram) return;
+            practiceEditor.value = decodeCode(selectedProgram.code);
+            setPracticeMessage('Solution loaded. Try changing it before running again.');
+        });
+
+        document.getElementById('refresh-output').addEventListener('click', () => {
+            renderOutput(practiceMode ? practiceEditor.value : selectedProgram.code);
+        });
 
         // Auto-load first program 
         window.onload = () => {
