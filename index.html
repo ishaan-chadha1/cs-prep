@@ -680,6 +680,7 @@ export default function BillCalculator() {
 
             const match = code.match(/function\s+([A-Za-z0-9_]+)/);
             const componentName = match ? match[1] : 'App';
+            const preparedCode = prepareReactCode(code);
             iframe.srcdoc = `
                 <!DOCTYPE html><html><head>
                 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin>\x3C/script>
@@ -687,7 +688,7 @@ export default function BillCalculator() {
                 <script src="https://unpkg.com/@babel/standalone/babel.min.js">\x3C/script>
                 </head><body><div id="root"></div>
                 <script type="text/babel">
-                    ${code.replace(/export default function/, 'function').replace(/import .*;/g, '')}
+                    ${preparedCode.replace(/export default function/, 'function')}
                     const root = ReactDOM.createRoot(document.getElementById('root'));
                     root.render(<${componentName} />);
                 \x3C/script></body></html>`;
@@ -695,6 +696,25 @@ export default function BillCalculator() {
 
         function setPracticeMessage(message) {
             practiceMessage.innerText = message;
+        }
+
+        function prepareReactCode(code) {
+            const namedImports = [];
+            const withoutImports = code.replace(
+                /import\s+React(?:\s*,\s*\{\s*([^}]+)\s*\})?\s+from\s+['"]react['"]\s*;?/g,
+                (_, imports = '') => {
+                    imports.split(',').map(name => name.trim()).filter(Boolean).forEach(name => {
+                        const [imported, local = imported] = name.split(/\s+as\s+/);
+                        namedImports.push(`${imported}: ${local}`);
+                    });
+                    return '';
+                }
+            ).replace(/import\s+.*?;?\s*$/gm, '');
+
+            const hooks = namedImports.length > 0
+                ? `const { ${namedImports.join(', ')} } = React;`
+                : '';
+            return `${hooks}\n${withoutImports}`;
         }
 
         // --- Render Sidebar ---
